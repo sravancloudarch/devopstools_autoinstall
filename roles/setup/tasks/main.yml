@@ -1,0 +1,31 @@
+---
+- name: Install wget utility
+  yum:
+    name: wget
+    state: present
+
+- name: Install java jdk
+  yum:
+    pkg: /tmp/jdk-8u171-linux-x64.rpm
+    state: present
+
+- name: Install Maven  and setup
+  command: "tar -xf /tmp/apache-maven-3.5.4-bin.tar.gz && mv /tmp/apache-maven-3.5.4/ /usr/local/src/apache-maven/ && mv /tmp/maven.sh /etc/profile.d/maven.sh && chmod +x /etc/profile.d/maven.sh"
+
+- name: Install tomcat
+  yum:
+    name: tomcat
+    state: present
+
+- name: Configuring tomcat
+  command: "mv /tmp/tomcat-users.xml /usr/share/tomcat/conf/tomcat-users.xml && mv /tmp/tomcat.conf /usr/share/tomcat/conf/tomcat.conf"
+
+- name: Make Tomcat sa bootable Service
+  systemd:
+    name: tomcat
+    enabled: true
+
+- name: Start Tomcat service
+  systemd:
+    name: tomcat
+    state: started

@@ -1,0 +1,45 @@
+---
+- name: "Install Jenkins, Sonarqube & Artifactory"
+  hosts: 192.168.0.162
+  gather_facts: false
+  become: true
+  tasks:
+        - name: Install libselinux-python utility to support ansible copy
+          yum:
+                name: libselinux-python
+                state: present
+        - name: SCP required files
+          copy:
+            src: files/
+            dest: /tmp/
+
+        - name: Downlading JDK to /tmp
+          command: "cd /tmp/ &&  wget --no-cookies --no-check-certificate --header "Cookie:oraclelicense=accept-securebackup-cookie" "https://download.oracle.com/otn-pub/java/jdk/8u191-b12/2787e4a523244c269598db4e85c51e0c/jdk-8u191-linux-x64.rpm""
+
+        -name: Downloading Sonarwube to /tmp
+          command: "cd /tmp/ && wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.4.zip"
+
+        - import_role:
+                name: setup
+        - import_role:
+                name: jenkins
+        - import_role:
+                name: sonarqube
+        - import_role:
+                name: artifactory
+        - name: Jenkins init Password
+          shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+          changed_when: false
+          register: initialAdminPassword
+
+        - name: Access Details
+          command: cat /tmp/printdetails
+          register: printdetails
+
+        - name: Jenkins init Password as Below Please make a note
+          debug:
+            var: initialAdminPassword.stdout
+
+        - name:   Print Access Details
+          debug:
+            var: printdetails.stdout

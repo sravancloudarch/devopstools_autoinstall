@@ -1,0 +1,86 @@
+---
+- name: install epelrelease
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install PostgreSQL repository
+  yum:
+    pkg: /tmp/pgdg-centos96-9.6-3.noarch.rpm
+    state: present
+
+- name: Install PostgreSQL database server
+  yum: pkg={{item}} state=installed
+  with_items:
+    - postgresql96-server
+    - postgresql96-contrib
+    - unzip
+    - python-psycopg2
+    - python-psycopg2-doc
+
+- name: Check if PostgreSQL database is initialized.
+  stat:
+    path: "/var/lib/pgsql/9.6/data/postgresql.conf"
+  register: pgdata_dir_version
+
+- name: Initialize postgresql DB
+  command: "/usr/pgsql-9.6/bin/postgresql96-setup initdb"
+  when: not pgdata_dir_version.stat.exists
+
+- name: 'configure pg_hba.conf'
+  template:
+    src: "../../../files/pg_hba.conf"
+    dest: "/var/lib/pgsql/9.6/data/pg_hba.conf"
+
+- name: Set Permission to ph_hba.conf file
+  file:
+    dest: "/var/lib/pgsql/9.6/data/pg_hba.conf"
+    owner: postgres
+    group: postgres
+
+- name: enable PostgreSQL
+  systemd:
+    name: postgresql-9.6
+    enabled: true
+
+- name: Start PostgreSQL
+  systemd:
+    name: postgresql-9.6
+    state: started
+
+- name: 'create sonar database'
+  postgresql_db: name=sonar template='template0'
+                 encoding='UTF-8'
+                 #lc_collate='en_EN.UTF-8' lc_ctype='en_EN.UTF-8'
+
+- name: 'create sonar user'
+  postgresql_user: db=sonar name=sonar password=cloud123
+
+- name: Extract Sonarqube zip to opt folder
+  unarchive:
+    src: /tmp/sonarqube-6.4.zip
+    dest: /opt/
+    remote_src: true
+
+- name: Moving sonarqube verison folder to sonarqube folder under opt
+  command: "mv /opt/sonarqube-6.4 /opt/sonarqube"
+
+- name: 'configure sonar.properties'
+  template:
+    src: "../../../files/sonar.properties"
+    dest: "/opt/sonarqube/conf/sonar.properties"
+
+- name: 'install Sonar as a service'
+  template:
+    src: "../../../files/sonar.service"
+    dest: /etc/systemd/system
+
+- name: Make Sonarqube sa bootable Service
+  systemd:
+    name: sonar
+    enabled: true
+
+- name: Start Sonarqube service
+  systemd:
+    name: sonar
+    state: started

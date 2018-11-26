@@ -1,0 +1,26 @@
+---
+- name: Copy artifactory rpm repo to repo list
+  command: "cp /tmp/bintray-jfrog-artifactory-rpms.repo /etc/yum.repos.d/"
+
+- name: Install Artifactory
+  yum:
+    name: jfrog-artifactory-oss
+    state: present
+
+- name: enable Artifactory
+  systemd:
+    name: artifactory
+    enabled: true
+
+- name: start Artifactory
+  systemd:
+    name: artifactory
+    state: started
+  ignore_errors: yes
+
+#- name: Start Artifactory
+#  command: "service artifactory start"
+
+
+- name: Waiting for Artifactory service to be up
+  command: sleep 120
