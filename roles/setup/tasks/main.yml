@@ -6,8 +6,11 @@
 
 - name: Install java jdk
   yum:
-    pkg: /tmp/jdk-8u171-linux-x64.rpm
+    pkg: /tmp/jdk-8u191-linux-x64.rpm
     state: present
+
+- name: Downloading Maven
+  command: "cd /tmp/ && wget http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz"
 
 - name: Install Maven  and setup
   command: "tar -xf /tmp/apache-maven-3.5.4-bin.tar.gz && mv /tmp/apache-maven-3.5.4/ /usr/local/src/apache-maven/ && mv /tmp/maven.sh /etc/profile.d/maven.sh && chmod +x /etc/profile.d/maven.sh"
