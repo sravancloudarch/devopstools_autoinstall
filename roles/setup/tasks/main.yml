@@ -21,8 +21,11 @@
     state: present
 
 - name: Configuring tomcat
-  command: "cp /tmp/tomcat-users.xml /usr/share/tomcat/conf/ && cp /tmp/tomcat.conf /usr/share/tomcat/conf/"
+  command: "mv -f /tmp/tomcat-users.xml /usr/share/tomcat/conf/"
 
+- name: Configuring tomcat
+  command: "mv -f /tmp/tomcat.conf /usr/share/tomcat/conf/"
+  
 - name: Make Tomcat sa bootable Service
   systemd:
     name: tomcat
