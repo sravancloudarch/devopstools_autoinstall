@@ -20,6 +20,14 @@
     name: tomcat
     state: present
 
+- name: Install PostgreSQL database server
+  yum: pkg={{item}} state=installed
+  with_items:
+    - tomcat-webapps
+    - tomcat-admin-webapps
+    - tomcat-docs-webapp
+    - tomcat-javadoc
+
 - name: Configuring tomcat
   command: "mv -f /tmp/tomcat-users.xml /usr/share/tomcat/conf/"
 
