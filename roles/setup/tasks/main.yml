@@ -20,6 +20,9 @@
     name: tomcat
     state: present
 
+- name: Configuring tomcat
+  command: "mv -f /tmp/tomcat.conf /usr/share/tomcat/conf/"
+
 - name: Install PostgreSQL database server
   yum: pkg={{item}} state=installed
   with_items:
@@ -32,11 +35,8 @@
   command: "mv -f /tmp/tomcat-users.xml /usr/share/tomcat/conf/"
 
 - name: Configuring tomcat
-  command: "mv -f /tmp/tomcat.conf /usr/share/tomcat/conf/"
-  
-- name: Configuring tomcat
-  command: "mv -f /tmp/server.xml /usr/share/tomcat/conf/"
-  
+  command: "sed -i 's/8080/8010/g' /usr/share/tomcat/conf/server.xml"
+
 - name: Make Tomcat sa bootable Service
   systemd:
     name: tomcat
