@@ -34,6 +34,9 @@
 - name: Configuring tomcat
   command: "mv -f /tmp/tomcat.conf /usr/share/tomcat/conf/"
   
+- name: Configuring tomcat
+  command: "mv -f /tmp/server.xml /usr/share/tomcat/conf/"
+  
 - name: Make Tomcat sa bootable Service
   systemd:
     name: tomcat
