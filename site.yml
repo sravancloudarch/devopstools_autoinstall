@@ -45,4 +45,4 @@
             var: printdetails.stdout
         
         - name: Final Reboot to make sure all services are working, You can access Apps using above Details.
-          command: ""reboot"
+          command: "reboot"
