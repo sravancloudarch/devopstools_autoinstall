@@ -35,7 +35,7 @@
 - name: Opening required ports
   command: "firewall-cmd --zone=public --add-port=8010-9000/tcp --permanent"
   
-- name: Opening required ports
+- name: Reloading firewalld
   command: "firewall-cmd --reload"
 
 - name: Downloading Maven
