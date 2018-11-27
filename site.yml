@@ -32,6 +32,19 @@
           changed_when: false
           register: initialAdminPassword
 
+        - name: System is rebooting.
+          shell: "sleep 5 && reboot"
+          async: 1
+          poll: 0
+
+
+        - name: Wait for the reboot to complete.
+          wait_for_connection:
+          connect_timeout: 20
+          sleep: 5
+          delay: 5
+          timeout: 300
+          
         - name: Access Details
           command: cat /tmp/printdetails
           register: printdetails
@@ -43,6 +56,3 @@
         - name:   Print Access Details
           debug:
             var: printdetails.stdout
-        
-        - name: Final Reboot to make sure all services are working, You can access Apps using above Details.
-          command: "reboot"
