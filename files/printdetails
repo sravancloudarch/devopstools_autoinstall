@@ -2,6 +2,7 @@ Kindly find Jenkins , Sonarqube and Artifactory Details: \n
 
 you can access by using below URL's:
 
+          Tomcat: http://YourIP:8010   {username: admin, Password: cloud123}
           Jenkins: http://YourIP:8080  {Password : initialAdminPassword which printed above}
           Sonarqube: http://YouIP:9000 {username: admin, Password: admin}
           Artifactory: http://YourIP:8081/artifactory/ {username: admin, Password: password}
