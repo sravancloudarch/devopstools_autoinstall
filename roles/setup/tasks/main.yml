@@ -3,11 +3,40 @@
   yum:
     name: wget
     state: present
+    
+- name: Install telnet utility
+  yum:
+    name: telnet
+    state: present
+    
+- name: Install firewalld utility
+  yum:
+    name: firewalld
+    state: present
 
 - name: Install java jdk
   yum:
     pkg: /tmp/jdk-8u191-linux-x64.rpm
     state: present
+    
+- name: Disabling SELinux
+  command: "sed -i 's/=enforcing/=disabled/g' /etc/selinux/config"
+  
+- name: Make firwalld as bootable Service
+  systemd:
+    name: firewalld
+    enabled: true
+
+- name: Start firewalld service
+  systemd:
+    name: firewalld
+    state: started
+    
+- name: Opening required ports
+  command: "firewall-cmd --zone=public --add-port=8010-9000/tcp --permanent"
+  
+- name: Opening required ports
+  command: "firewall-cmd --reload"
 
 - name: Downloading Maven
   command: "wget http://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz -O /tmp/apache-maven-3.5.4-bin.tar.gz"
@@ -37,7 +66,7 @@
 - name: Configuring tomcat
   command: "sed -i 's/8080/8010/g' /usr/share/tomcat/conf/server.xml"
 
-- name: Make Tomcat sa bootable Service
+- name: Make Tomcat as bootable Service
   systemd:
     name: tomcat
     enabled: true
